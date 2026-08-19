@@ -9,10 +9,12 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const parsed = parseInt(searchParams.get('limit') ?? '3', 10);
   const limit = Math.min(Math.max(Number.isNaN(parsed) ? 3 : parsed, 1), 10);
+  const includeContent = searchParams.get('include') === 'content';
 
+  const fields = 'slug, title, excerpt, date, categories, featuredImage';
   const { data, error } = await supabase
     .from('posts')
-    .select('slug, title, excerpt, date, categories, featuredImage')
+    .select(includeContent ? `${fields}, content` : fields)
     .or('published.eq.true,published.is.null')
     .order('date', { ascending: false })
     .limit(limit);
