@@ -5,12 +5,19 @@ import crypto from 'crypto';
 
 export async function POST(request: NextRequest) {
   try {
-    // Get the admin token from env vars (only admin can register authors)
-    const adminToken = process.env.ADMIN_API_TOKEN || "your_admin_token";
+    // Get the admin token from env vars (only admin can register authors).
+    // No fallback: without the env var the route refuses everything.
+    const adminToken = process.env.ADMIN_API_TOKEN;
+    if (!adminToken) {
+      console.error('ADMIN_API_TOKEN is not set; refusing author registration');
+      return NextResponse.json({ error: "Registration is not configured" }, { status: 503 });
+    }
     const body = await request.json();
 
-    // Validate admin token
-    if (body.adminToken !== adminToken) {
+    // Validate admin token (constant-time, so timing can't leak it)
+    const given = Buffer.from(typeof body.adminToken === "string" ? body.adminToken : "");
+    const expected = Buffer.from(adminToken);
+    if (given.length !== expected.length || !crypto.timingSafeEqual(given, expected)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
