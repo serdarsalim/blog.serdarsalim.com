@@ -18,6 +18,8 @@ export type Post = {
   socmed: boolean;
   published: boolean;
   position?: number | null;
+  post_type?: 'article' | 'link' | null;
+  source_url?: string | null;
   created_at: string;
   updated_at: string;
 };

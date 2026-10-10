@@ -177,6 +177,8 @@ export async function loadBlogPostsServer(): Promise<BlogPost[]> {
     socmed: post.socmed !== undefined ? post.socmed : true,
     published: post.published ?? false,
     position: post.position ?? null,
+    post_type: post.post_type ?? 'article',
+    source_url: post.source_url ?? null,
     created_at: post.created_at,
     updated_at: post.updated_at
   }));
@@ -268,6 +270,8 @@ export async function getPostBySlugServer(slug: string): Promise<BlogPost | null
     socmed: post.socmed !== undefined ? post.socmed : true,
     published: post.published ?? false,
     position: post.position ?? null,
+    post_type: post.post_type ?? 'article',
+    source_url: post.source_url ?? null,
     created_at: post.created_at,
     updated_at: post.updated_at
   };

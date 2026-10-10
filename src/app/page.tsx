@@ -1,4 +1,5 @@
 // src/app/page.tsx
+import { Suspense } from "react";
 import { getAllPosts, getPrimaryAuthorProfile } from "@/lib/data";
 import BlogClientContent from "@/app/components/BlogClientContent";
 
@@ -14,10 +15,13 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white relative overflow-hidden">
-      <BlogClientContent
-        initialPosts={posts}
-        authorProfile={authorProfile || undefined}
-      />
+      {/* BlogClientContent reads useSearchParams, which needs a Suspense boundary to prerender. */}
+      <Suspense fallback={null}>
+        <BlogClientContent
+          initialPosts={posts}
+          authorProfile={authorProfile || undefined}
+        />
+      </Suspense>
     </div>
   );
 }
