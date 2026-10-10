@@ -2,83 +2,128 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Simple color scheme with only what you're using */
 :root {
-  /* Core colors */
   --background: #ffffff;
   --foreground: #111827;
-  
-  /* Blues - only the ones you actually use */
-  --blue-50: #eff6ff;
-  --blue-100: #dbeafe;
-  --blue-500: #3b82f6;
-  --blue-600: #2563eb;
-  
-  /* Grays - simplified */
-  --gray-50: #f9fafb;
-  --gray-100: #f3f4f6;
-  --gray-200: #e5e7eb;
-  --gray-400: #9ca3af;
-  --gray-500: #6b7280;
-  --gray-600: #4b5563;
-  --gray-700: #374151;
-  
-  /* Simplified transitions */
-  --transition-normal: 250ms;
-}
-
-/* Add these animation utilities */
-@keyframes pulse-slow {
-  0%, 100% {
-    opacity: 0.4;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.6;
-    transform: scale(1.05);
-  }
-}
-
-.animate-pulse-slow {
-  animation: pulse-slow 8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-:root {
-  --card-bg-color: #f2e9dd;
-  --gradient-middle: #f0f9ff;
-  --gradient-end: #e0f2fe;
+  --accent: #ea580c;
+  color-scheme: light;
 }
 
 .dark {
-  --card-bg-color: #121118;
-  --gradient-middle: #1a1c2e;
-  --gradient-end: #0c1425;
+  --background: #0f172a;
+  --foreground: #f1f5f9;
+  --accent: #fb923c;
+  color-scheme: dark;
 }
 
-/* Dark mode colors */
-.dark {
-  --background: #0f172a; /* slate-900 */
-  --foreground: #f8fafc;
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
-/* Base styles */
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: system-ui, sans-serif;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-feature-settings: "cv11", "ss01", "ss03";
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* Blog card styles - these are actually used */
-.blog-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+::selection {
+  background: rgba(249, 115, 22, 0.25);
 }
 
-.blog-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
-/* Loading spinner animation - used in your loading state */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Article body: the HTML comes from TinyMCE / Mana, so the rules live here, not in classes. */
+.article-body {
+  font-size: 1.125rem;
+  line-height: 1.75;
+}
+
+.article-body > :first-child {
+  margin-top: 0;
+}
+
+.article-body .double-break {
+  height: 1rem;
+}
+
+.article-body img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  margin: 2rem auto;
+}
+
+.article-body iframe {
+  max-width: 100%;
+}
+
+.article-body .video-container {
+  margin: 2rem 0;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.article-body h2,
+.article-body h3,
+.article-body h4 {
+  scroll-margin-top: 5rem;
+}
+
+.article-body [style*="font-size"] {
+  line-height: 1.4 !important;
+}
+
+.article-body h1 span[style*="font-size"],
+.article-body h2 span[style*="font-size"],
+.article-body h3 span[style*="font-size"] {
+  font-weight: 700;
+}
+
+.article-body table {
+  display: block;
+  overflow-x: auto;
+}
+
+.article-body .csv-content {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.8125rem;
+}
+
+/* Keep intentional inline colors readable in dark mode. */
+.dark .article-body [style*="color: rgb(0, 0, 0)"],
+.dark .article-body [style*="color:#000"],
+.dark .article-body [style*="color: #000"] {
+  color: inherit !important;
+}
+
+/* Fade-in for the feed cards; no JS and respects reduced motion above. */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.rise {
+  animation: rise 0.35s ease-out both;
+}
+
+/* Loading spinner used by the admin screens. */
 @keyframes spinner {
   to { transform: rotate(360deg); }
 }
@@ -86,4 +131,3 @@ body {
 .loading-spinner {
   animation: spinner 0.75s linear infinite;
 }
-

@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { signIn, useSession } from "next-auth/react";
 
@@ -129,12 +128,7 @@ export default function CommentSection({ slug }: CommentSectionProps) {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, delay: 0.7 }}
-      className="pt-12 mt-6"
-    >
+    <div className="pt-4">
       <div className="border-t border-gray-200 dark:border-gray-800 pt-8">
         <h3 className="text-xl font-bold mb-6">Comments</h3>
 
@@ -219,6 +213,6 @@ export default function CommentSection({ slug }: CommentSectionProps) {
           </div>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 }

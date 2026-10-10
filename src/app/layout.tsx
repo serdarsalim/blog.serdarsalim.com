@@ -1,87 +1,112 @@
-import type { Metadata } from "next";
-import { Inter, Roboto_Mono, Merriweather } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import Footer from "./components/footer";
+import SiteHeader from "./components/SiteHeader";
+import JsonLd from "./components/JsonLd";
 import GoogleTagManager from "./components/GoogleTagManager";
 import Analytics from "./components/analytics";
-import { SpeedInsights } from '@vercel/speed-insights/next';
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import ScrollManager from "./components/ScrollManager";
 import { Providers } from "./providers";
+import { SITE } from "@/lib/site";
 
-
-// Keep your existing Inter font
 const inter = Inter({
   variable: "--font-sans",
   subsets: ["latin"],
+  display: "swap",
 });
 
-const robotoMono = Roboto_Mono({
-  variable: "--font-mono",
-  subsets: ["latin"],
-});
-
-// Add Merriweather for serif
-const merriweather = Merriweather({
-  variable: "--font-serif",
-  weight: ['400', '700'],
-  style: ['normal', 'italic'],
-  subsets: ["latin"],
-});
-
-// Update your metadata in layout.tsx
 export const metadata: Metadata = {
-  metadataBase: new URL('https://blog.serdarsalim.com'),
+  metadataBase: new URL(SITE.url),
   title: {
-    default: "Serdar Salim Domurcuk – Digital notes on my interests",
-    template: "%s | Serdar Salim Domurcuk"
+    default: SITE.title,
+    template: `%s · ${SITE.name}`,
   },
-  description: "Writing, research notes, and product experiments by Serdar Salim Domurcuk covering design, technology, publishing systems, and self-directed work.",
+  description: SITE.description,
+  authors: [{ name: SITE.fullName, url: SITE.website }],
+  creator: SITE.fullName,
   openGraph: {
-    type: 'website',
-    locale: 'en_US',
-    url: 'https://blog.serdarsalim.com',
-    siteName: 'Serdar Salim Domurcuk',
-    title: 'Serdar Salim Domurcuk – Digital notes on my interests',
-    description: 'Essays and field notes on design, technology, publishing workflows, and independent creative practice by Serdar Salim Domurcuk.',
-    images: [{
-      url: '/og-image.jpg',
-      width: 1200,
-      height: 630,
-      alt: 'Serdar Salim Domurcuk – Digital notes on my interests',
-    }]
+    type: "website",
+    locale: SITE.locale,
+    url: SITE.url,
+    siteName: SITE.name,
+    title: SITE.title,
+    description: SITE.description,
   },
   twitter: {
-    card: 'summary_large_image',
-    title: 'Serdar Salim Domurcuk – Digital notes on my interests',
-    description: 'Daily notes, essays, and product experiments on design, systems thinking, and digital publishing by Serdar Salim Domurcuk.',
-    images: ['/og-image.jpg'],
+    card: SITE.twitterCard,
+    title: SITE.title,
+    description: SITE.description,
   },
   alternates: {
-    canonical: 'https://blog.serdarsalim.com',
+    canonical: SITE.url,
     types: {
-      'application/rss+xml': 'https://blog.serdarsalim.com/feed.xml',
+      "application/rss+xml": `${SITE.url}/feed.xml`,
     },
   },
-  keywords: 'Serdar Salim Domurcuk, personal blog, independent publishing, product design, technology, digital notes, research, essays',
+  robots: { index: true, follow: true },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  const GTM_ID = 'GTM-KJKN7R99'
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
+  ],
+};
+
+// Applies the saved theme before first paint so dark-mode readers never see a white flash.
+// Default stays light (an explicit choice from the earlier design); "dark" only when saved.
+const themeScript = `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'){document.documentElement.classList.add('dark')}}catch(e){}})();`;
+
+const siteJsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": `${SITE.url}/#person`,
+      name: SITE.fullName,
+      alternateName: SITE.name,
+      url: SITE.website,
+      image: `${SITE.url}/icon.png`,
+      sameAs: [SITE.website],
+      jobTitle: "Automation engineer and product builder",
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${SITE.url}/#website`,
+      url: SITE.url,
+      name: SITE.name,
+      description: SITE.description,
+      publisher: { "@id": `${SITE.url}/#person` },
+      inLanguage: "en",
+      potentialAction: {
+        "@type": "SearchAction",
+        target: { "@type": "EntryPoint", urlTemplate: `${SITE.url}/?search={search_term_string}` },
+        "query-input": "required name=search_term_string",
+      },
+    },
+  ],
+};
+
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const GTM_ID = "GTM-KJKN7R99";
 
   return (
-    <html lang="en">
-      <body className={`${inter.variable} ${merriweather.variable} ${robotoMono.variable} antialiased`}>
-      <Providers>
-        <GoogleTagManager gtmId={GTM_ID} />
-        <Analytics />
-        <ScrollManager />
-        {children}
-        <SpeedInsights />
-        <Footer />
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <JsonLd data={siteJsonLd} />
+      </head>
+      <body className={`${inter.variable} antialiased`}>
+        <Providers>
+          <GoogleTagManager gtmId={GTM_ID} />
+          <Analytics />
+          <ScrollManager />
+          <SiteHeader />
+          {children}
+          <SpeedInsights />
+          <Footer />
         </Providers>
       </body>
     </html>
