@@ -1,5 +1,18 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // The floating dev-tools bubble is never used here; hide it outright.
+  // Next 14 predates `devIndicators: false`, so this is the object form.
+  devIndicators: { buildActivity: false },
+  async redirects() {
+    return [
+      // /blog/<slug> was a second copy of /posts/<slug>; keep old links alive.
+      { source: '/blog/:slug', destination: '/posts/:slug', permanent: true },
+      { source: '/blog', destination: '/', permanent: true },
+      // HALQA-era pages that no longer exist.
+      { source: '/about', destination: '/', permanent: true },
+      { source: '/pending', destination: '/', permanent: true },
+    ];
+  },
   images: {
     remotePatterns: [
       {

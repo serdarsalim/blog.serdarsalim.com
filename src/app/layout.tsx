@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Inter, Roboto_Mono, Merriweather } from "next/font/google";
 import "./globals.css";
 import Footer from "./components/footer";
-import { BlogProvider } from "./blogContext";
 import GoogleTagManager from "./components/GoogleTagManager";
 import Analytics from "./components/analytics";
 import { SpeedInsights } from '@vercel/speed-insights/next';
@@ -64,16 +63,6 @@ export const metadata: Metadata = {
     },
   },
   keywords: 'Serdar Salim Domurcuk, personal blog, independent publishing, product design, technology, digital notes, research, essays',
-  icons: {
-    icon: [
-      { url: '/favicon-32x32.png?v=2', sizes: '32x32', type: 'image/png' },
-      { url: '/favicon-16x16.png?v=2', sizes: '16x16', type: 'image/png' },
-    ],
-    apple: '/apple-touch-icon.png?v=2',
-    other: [
-      { rel: 'icon', url: '/favicon.ico?v=2' },
-    ],
-  },
 };
 
 export default function RootLayout({
@@ -90,11 +79,9 @@ export default function RootLayout({
         <GoogleTagManager gtmId={GTM_ID} />
         <Analytics />
         <ScrollManager />
-        <BlogProvider>
-          {children}
-          <SpeedInsights />
-          <Footer />
-        </BlogProvider>
+        {children}
+        <SpeedInsights />
+        <Footer />
         </Providers>
       </body>
     </html>

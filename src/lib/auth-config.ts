@@ -1,16 +1,10 @@
 import { NextAuthOptions } from 'next-auth';
 import GoogleProvider from "next-auth/providers/google";
-import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 
-// Change to a function to avoid build-time initialization
-export function getServiceRoleClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_KEY!, 
-    { auth: { persistSession: false } }
-  );
-}
+// Shared service-role client (see supabase-admin.ts)
+import { getServiceRoleClient } from './supabase-admin';
+export { getServiceRoleClient };
 
 // Export auth options for use across the application
 export const authOptions: NextAuthOptions = {

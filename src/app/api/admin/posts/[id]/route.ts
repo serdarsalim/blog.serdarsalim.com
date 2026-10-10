@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { getServerSession } from 'next-auth';
-import { adminSupabase } from '@/lib/admin-supabase';
 import { authOptions, getServiceRoleClient } from '@/lib/auth-config';
 
 function normalizeCategories(input: unknown): string[] | undefined {
@@ -100,7 +99,7 @@ export async function PATCH(
       updates.categories = categories;
     }
 
-    const { data, error } = await adminSupabase
+    const { data, error } = await getServiceRoleClient()
       .from('posts')
       .update(updates)
       .eq('id', id)
@@ -136,7 +135,7 @@ export async function DELETE(
     return NextResponse.json({ error: 'Post ID is required' }, { status: 400 });
   }
 
-  const { data: existing, error: fetchError } = await adminSupabase
+  const { data: existing, error: fetchError } = await getServiceRoleClient()
     .from('posts')
     .select('slug')
     .eq('id', id)
@@ -146,7 +145,7 @@ export async function DELETE(
     console.error('Error locating post before delete:', fetchError);
   }
 
-  const { error } = await adminSupabase.from('posts').delete().eq('id', id);
+  const { error } = await getServiceRoleClient().from('posts').delete().eq('id', id);
 
   if (error) {
     console.error('Failed to delete post:', error);

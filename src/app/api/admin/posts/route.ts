@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { getServerSession } from 'next-auth';
-import { adminSupabase } from '@/lib/admin-supabase';
 import { authOptions, getServiceRoleClient } from '@/lib/auth-config';
 
 function normalizeCategories(input: unknown): string[] {
@@ -61,7 +60,7 @@ export async function GET() {
   const adminCheck = await ensureAdmin();
   if ('error' in adminCheck) return adminCheck.error;
 
-  const { data, error } = await adminSupabase
+  const { data, error } = await getServiceRoleClient()
     .from('posts')
     .select('*')
     .order('updated_at', { ascending: false });
@@ -108,7 +107,7 @@ export async function POST(request: NextRequest) {
       updated_at: now,
     };
 
-    const { data, error } = await adminSupabase
+    const { data, error } = await getServiceRoleClient()
       .from('posts')
       .insert(newPost)
       .select('*')
